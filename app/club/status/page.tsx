@@ -15,16 +15,19 @@ export default function Home() {
                                 <p className={"text-xl"}>{"Event: Fresher's Day"}</p>
                                 <p className={"text-xl mt-3"}>Date: Tomorrow</p>
                                 <p className={"text-xl mt-3"}>Venue: Backyard</p>
+                                <p className={"text-xl mt-3"}>Status: Processing</p>
                             </div>
                             <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                 <p className={"text-xl"}>Event: Breeze</p>
                                 <p className={"text-xl mt-3"}>Date: someday</p>
                                 <p className={"text-xl mt-3"}>Venue: sometime</p>
+                                <p className={"text-xl mt-3"}>Status: Processing</p>
                             </div>
                             <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                 <p className={"text-xl"}>Event: Surge</p>
                                 <p className={"text-xl mt-3"}>Date: some other day</p>
                                 <p className={"text-xl mt-3"}>Venue: some other time</p>
+                                <p className={"text-xl mt-3"}>Status: Rejected</p>
                             </div>
                         </div>
 

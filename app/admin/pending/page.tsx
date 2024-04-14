@@ -39,7 +39,7 @@ export default function Home() {
                             <ScrollArea className={"h-full w-full items-center py-5 flex flex-col"}>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>{"Event: Fresher's Day"}</p>
-                                    <p className={"text-xl mt-3"}>Date: Tomorrow</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: Backyard</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -47,7 +47,7 @@ export default function Home() {
                                 </div>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>Event: Breeze</p>
-                                    <p className={"text-xl mt-3"}>Date: someday</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: sometime</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -55,7 +55,7 @@ export default function Home() {
                                 </div>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>Event: Surge</p>
-                                    <p className={"text-xl mt-3"}>Date: some other day</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: some other time</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -63,7 +63,7 @@ export default function Home() {
                                 </div>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>Event: Surge</p>
-                                    <p className={"text-xl mt-3"}>Date: some other day</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: some other time</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -71,7 +71,7 @@ export default function Home() {
                                 </div>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>Event: Surge</p>
-                                    <p className={"text-xl mt-3"}>Date: some other day</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: some other time</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -86,7 +86,7 @@ export default function Home() {
                             <ScrollArea className={"h-full w-full items-center py-5 flex flex-col"}>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>{"Event: Fresher's Day"}</p>
-                                    <p className={"text-xl mt-3"}>Date: Tomorrow</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: Backyard</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -94,7 +94,7 @@ export default function Home() {
                                 </div>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>Event: Breeze</p>
-                                    <p className={"text-xl mt-3"}>Date: someday</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: sometime</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -102,7 +102,7 @@ export default function Home() {
                                 </div>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>Event: Surge</p>
-                                    <p className={"text-xl mt-3"}>Date: some other day</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: some other time</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -110,7 +110,7 @@ export default function Home() {
                                 </div>
                                 <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
                                     <p className={"text-xl"}>Event: Surge</p>
-                                    <p className={"text-xl mt-3"}>Date: some other day</p>
+                                    <p className={"text-xl mt-3"}>Amount: 60000</p>
                                     <p className={"text-xl mt-3"}>Venue: some other time</p>
                                     <div className={"w-full h-fit mt-2 flex items-center justify-end"}>
                                         <Button onClick={openAlertDialog}>View Details</Button>
@@ -152,12 +152,19 @@ export default function Home() {
                                     </div>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                    <Button onClick={closeAlertDialog} type="submit" className="bg-green-600 hover:bg-green-800 w-full mt-5 font-bold py-2 px-4 rounded-md">
-                                        Approve
-                                    </Button>
-                                    <Button variant={"destructive"} onClick={closeAlertDialog} type="submit" className="w-full mt-5 font-bold py-2 px-4 rounded-md">
-                                        Reject
-                                    </Button>
+                                    <div className={"w-full h-full flex flex-col"}>
+                                    <div className={"flex flex-row w-full h-full space-x-4"}>
+                                        <Button onClick={closeAlertDialog} type="submit" className="bg-green-600 hover:bg-green-800 w-full mt-5 font-bold py-2 px-4 rounded-md">
+                                            Approve
+                                        </Button>
+                                        <Button variant={"destructive"} onClick={closeAlertDialog} type="submit" className="w-full mt-5 font-bold py-2 px-4 rounded-md">
+                                            Reject
+                                        </Button>
+                                    </div>
+                                        <Button className={"mt-4"} onClick={closeAlertDialog}>
+                                            Close
+                                        </Button>
+                                    </div>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>

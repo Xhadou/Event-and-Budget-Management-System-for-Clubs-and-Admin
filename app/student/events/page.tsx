@@ -5,7 +5,7 @@ export default function Home() {
 
     return (
         <main className="flex h-screen w-full flex-col justify-between bg-gray-100">
-            <div className="w-full h-full flex justify-center items-center">
+            <div className="w-full h-full flex flex-col justify-center items-center">
                 <div className="w-6/12 h-4/5 px-8 pt-6 bg-white rounded-lg shadow-md flex flex-row">
                     <div className={"h-full w-full items-center justify-center flex flex-col"}>
                         <h1 className="text-2xl font-bold text-gray-700 text-center mb-4">Upcoming Events</h1>
@@ -39,7 +39,10 @@ export default function Home() {
 
                     </div>
                 </div>
+
+                <Button className={"mt-4"}>Logout</Button>
             </div>
+
         </main>
     )
 
