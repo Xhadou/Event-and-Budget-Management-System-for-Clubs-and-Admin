@@ -64,7 +64,7 @@ export default function Home() {
             const eventId = eventData.eventid;
 
             // Insert reimbursement request data into the database
-            const { error } = await supabase.from('reimbursementrequests').insert([
+            const { error } = await supabase.from('budgetrequests').insert([
                 {
                     eventid: eventId,
                     requestedamount: requestedAmount,
