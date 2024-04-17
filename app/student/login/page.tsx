@@ -6,12 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/lib/supabaseClient'; // Ensure you have initialized Supabase client
 
-interface Student {
-  rollnumber: number;
-  name: string;
-  email: string;
-}
-
 export default function Home() {
   const router = useRouter();
   const [email, setEmail] = useState('');
