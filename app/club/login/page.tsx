@@ -1,12 +1,41 @@
 'use client'
 
+
+import { useState } from 'react';
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
+import { supabase } from '@/lib/supabaseClient'; 
 
 export default function Home(){
 
-    const router = useRouter()
+    const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+    
+    const handleLogin = async () => {
+        // Check if the email exists in the clubs table and retrieve the club details
+        const { data: clubData, error: clubError } = await supabase
+          .from('clubs')
+          .select('*')
+          .eq('email', email)
+          .single();
+    
+        if (clubError || !clubData) {
+          setLoginError('Incorrect username or password.');
+          return;
+        }
+    
+        // Compare the input password with the one in the database
+        if (clubData.password === password) {
+          // If match, redirect to the club events page
+          router.push(`/club/events?email=${encodeURIComponent(email)}`);
+        } else {
+          setLoginError('Incorrect username or password.');
+        }
+      };
+
 
     return(
         <main className="flex h-screen w-full flex-col items-center justify-between">
@@ -14,34 +43,37 @@ export default function Home(){
                 <div className="w-full max-w-md px-8 py-6 bg-white rounded-lg shadow-md">
                     <h1 className="text-xl font-bold text-gray-700 text-center mb-4">Club Login</h1>
                     <div className="mb-4">
-                        <label htmlFor="username"
-                               className="block text-base text-gray-700 font-bold mb-2">Username</label>
-                        <Input
-                            type="text"
-                            id="username"
-                            className="shadow rounded w-full py-2 px-3 text-gray-700"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="password"
-                               className="block text-base text-gray-700 font-bold mb-2">Password</label>
-                        <Input
-                            type="password"
-                            id="password"
-                            className="shadow rounded w-full py-2 px-3 text-gray-700"
-                        />
-                    </div>
+                    <label htmlFor="email" className="block text-base text-gray-700 font-bold mb-2">Email</label>
+        <Input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="shadow rounded w-full py-2 px-3 text-gray-700"
+        />
+      </div>
+      <div className="mb-4">
+        <label htmlFor="password" className="block text-base text-gray-700 font-bold mb-2">Password</label>
+        <Input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="shadow rounded w-full py-2 px-3 text-gray-700"
+        />
+      </div>
                     <div className="flex items-center justify-between">
                         <Button
                             type="submit"
                             className="font-bold py-2 px-4 w-full mt-5"
-                            onClick={() => {router.push('/club/events')}}
+                            onClick={handleLogin}
                         >
                             Login
                         </Button>
                     </div>
                 </div>
             </div>
+            {loginError && <p className="text-red-500">{loginError}</p>}
         </main>
     )
 }
