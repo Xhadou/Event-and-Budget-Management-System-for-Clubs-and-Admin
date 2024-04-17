@@ -1,12 +1,52 @@
-'use client'
+'use client';
 
-import {Separator} from "@/components/ui/separator";
-import {Button} from "@/components/ui/button";
-import {useRouter} from "next/navigation";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
-export default function Home() {
+interface Event {
+    eventid: number;
+    clubid: number;
+    eventname: string;
+    date: string;
+    venue: string;
+    status: string;
+    requestedbudget: number;
+    allocatedbudget: number;
+    clubname?: string;
+}
 
+export default function Home() {    
+    const [events, setEvents] = useState<Event[]>([]);
     const router = useRouter();
+    useEffect(() => {
+        
+        // Function to fetch events
+        const fetchEvents = async () => {
+            const { data, error } = await supabase
+                .from('events')
+                .select('*, clubs ( clubname )')
+                .eq('status', 'Scheduled')
+                .gte('date', new Date().toISOString().slice(0, 10)) // Get today's date in YYYY-MM-DD format
+                .order('date', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching events:', error);
+            } 
+            if (data) {
+                // Map through the data to include the clubName in the event object
+                const eventsWithClubName = data.map(event => ({
+                    ...event,
+                    clubname: event.clubs?.clubname // Access the ClubName from the joined Clubs table
+                }));
+                setEvents(eventsWithClubName);
+            }
+        };
+
+        fetchEvents();
+    }, []);
 
     return (
         <main className="flex h-screen w-full flex-col justify-between bg-gray-100">
@@ -16,21 +56,18 @@ export default function Home() {
                         <h1 className="text-2xl font-bold text-gray-700 text-center mb-4">Upcoming Events</h1>
                         <Separator />
                         <div className={"h-full w-full items-center py-5 flex flex-col overflow-y-scroll"}>
-                            <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
-                                <p className={"text-xl"}>{"Event: Fresher's Day"}</p>
-                                <p className={"text-xl mt-3"}>Date: Tomorrow</p>
-                                <p className={"text-xl mt-3"}>Venue: Backyard</p>
-                            </div>
-                            <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
-                                <p className={"text-xl"}>Event: Breeze</p>
-                                <p className={"text-xl mt-3"}>Date: someday</p>
-                                <p className={"text-xl mt-3"}>Venue: sometime</p>
-                            </div>
-                            <div className={"h-48 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
-                                <p className={"text-xl"}>Event: Surge</p>
-                                <p className={"text-xl mt-3"}>Date: some other day</p>
-                                <p className={"text-xl mt-3"}>Venue: some other time</p>
-                            </div>
+                            {events.length > 0 ? (
+                                events.map((event, index) => (
+                                    <div key={index} className={"h-58 w-[500px] rounded-xl border border-gray-300 py-4 px-8 mb-5"}>
+                                        <p className={"text-xl"}>Club: {event.clubname}</p>
+                                        <p className={"text-xl mt-3"}>Event: {event.eventname}</p>
+                                        <p className={"text-xl mt-3"}>Date: {new Date(event.date).toLocaleDateString()}</p>
+                                        <p className={"text-xl mt-3"}>Venue: {event.venue}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No upcoming events found.</p>
+                            )}
                         </div>
                     </div>
 
@@ -44,6 +81,5 @@ export default function Home() {
                 <Button className={"mt-4"}>Logout</Button>
             </div>
         </main>
-    )
-
+    );
 }
