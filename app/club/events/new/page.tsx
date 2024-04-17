@@ -5,23 +5,20 @@ import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 
 export default function Home() {
     const searchParams = useSearchParams();
     const email = searchParams.get('email');
     const [eventName, setEventName] = useState('');
     const [eventDate, setEventDate] = useState('');
-    const [requestedAmount, setRequestedAmount] = useState('');
-    const [reason, setReason] = useState('');
-    const [message, setMessage] = useState('');
+    const [eventVenue, setEventVenue] = useState('');
+    const [requestedBudget, setRequestedBudget] = useState('');
+    const [message, setMessage] = useState(''); 
 
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         try {
-            const formattedDate = new Date(eventDate).toISOString().slice(0, 10);
-
             // Fetch club ID associated with the provided email
             const { data: clubData, error: clubError } = await supabase
                 .from('clubs')
@@ -41,43 +38,25 @@ export default function Home() {
 
             const clubId = clubData.clubid;
 
-            // Fetch event ID based on the provided event name and date
-            const { data: eventData, error: eventError } = await supabase
-                .from('events')
-                .select('eventid')
-                .eq('clubid', clubId)
-                .eq('eventname', eventName)
-                .eq('date', formattedDate)
-                .eq('status', 'Scheduled') // Check for Scheduled status
-                .single();
-
-            if (eventError) {
-                console.error('Error fetching event data:', eventError);
-                return;
-            }
-
-            if (!eventData) {
-                console.error('Event not found with the provided name, date, or status not Scheduled');
-                return;
-            }
-
-            const eventId = eventData.eventid;
-
-            // Insert reimbursement request data into the database
-            const { error } = await supabase.from('reimbursementrequests').insert([
+            // Insert event data into the database
+            const { error } = await supabase.from('events').insert([
                 {
-                    eventid: eventId,
-                    requestedamount: requestedAmount,
-                    reason: reason,
+                    eventname: eventName,
+                    date: eventDate,
+                    venue: eventVenue,
+                    requestedbudget: requestedBudget,
+                    clubid: clubId,
                 },
             ]);
 
             if (error) {
-                console.error('Error inserting reimbursement request:', error);
+                console.error('Error inserting event data:', error);
                 return;
             }
 
-            setMessage('Request sent successfully');
+            console.log('Event data inserted successfully');
+            // Optionally, you can navigate to a success page or perform other actions
+            setMessage('Request submitted successfully');
         } catch (error) {
             console.error('Error:', error);
         }
@@ -88,7 +67,8 @@ export default function Home() {
             <div className="w-full h-full items-center justify-center flex">
                 <div className="w-full max-w-md px-8 py-6 bg-white rounded-lg shadow-md">
                     <header className="flex justify-between mb-4">
-                        <h1 className="text-2xl font-bold text-gray-700">Apply for reimbursement</h1>
+                        <h1 className="text-2xl font-bold text-gray-700">Event Registration</h1>
+                        <p className="text-md text-gray-500 hover:underline">Logout</p>
                     </header>
                     <main>
                         <form onSubmit={handleFormSubmit}>
@@ -119,34 +99,35 @@ export default function Home() {
                                 />
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="amount" className="block text-gray-700 text-sm font-bold mb-2">
-                                    Amount:
+                                <label htmlFor="venue" className="block text-gray-700 text-sm font-bold mb-2">
+                                    Venue:
                                 </label>
                                 <Input
                                     type="text"
-                                    id="amount"
-                                    name="amount"
+                                    id="venue"
+                                    name="venue"
                                     className="w-full py-2 px-3 text-gray-700"
-                                    value={requestedAmount}
-                                    onChange={(e) => setRequestedAmount(e.target.value)}
+                                    value={eventVenue}
+                                    onChange={(e) => setEventVenue(e.target.value)}
                                 />
                             </div>
                             <div className="mb-4">
-                                <label htmlFor="reason" className="block text-gray-700 text-sm font-bold mb-2">
-                                    Reason/Feedback:
+                                <label htmlFor="budget" className="block text-gray-700 text-sm font-bold mb-2">
+                                    Budget:
                                 </label>
-                                <Textarea
-                                    id="reason"
-                                    name="reason"
+                                <Input
+                                    type="text"
+                                    id="budget"
+                                    name="budget"
                                     className="w-full py-2 px-3 text-gray-700"
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
+                                    value={requestedBudget}
+                                    onChange={(e) => setRequestedBudget(e.target.value)}
                                 />
                             </div>
                             <Button type="submit" className="w-full mt-5 font-bold py-2 px-4 rounded-md">
                                 Submit
-                            </Button>
-                            {message && <p className="text-green-500 mt-4">{message}</p>}
+                                </Button>
+                                {message && <p className="text-green-500 mt-4">{message}</p>}
                         </form>
                     </main>
                 </div>
