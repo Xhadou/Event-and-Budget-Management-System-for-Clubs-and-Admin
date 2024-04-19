@@ -1,15 +1,17 @@
 'use client'
 
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import {toast} from "@/components/ui/use-toast";
 
 export default function Home() {
+    const router = useRouter();
     const searchParams = useSearchParams();
-    const email = searchParams.get('email');
+    const email = searchParams.get('email') ?? logout();
     const [eventName, setEventName] = useState('');
     const [eventDate, setEventDate] = useState('');
     const [requestedAmount, setRequestedAmount] = useState('');
@@ -22,6 +24,8 @@ export default function Home() {
         try {
             const formattedDate = new Date(eventDate).toISOString().slice(0, 10);
 
+            console.log(email);
+
             // Fetch club ID associated with the provided email
             const { data: clubData, error: clubError } = await supabase
                 .from('clubs')
@@ -31,11 +35,13 @@ export default function Home() {
 
             if (clubError) {
                 console.error('Error fetching club data:', clubError);
+                toast({"title":"Error fetching club data", "description": clubError.message})
                 return;
             }
 
             if (!clubData) {
                 console.error('Club not found for the provided email');
+                toast({"title":"Club not found", "description": "Club not found for the provided email"})
                 return;
             }
 
@@ -53,35 +59,50 @@ export default function Home() {
 
             if (eventError) {
                 console.error('Error fetching event data:', eventError);
+                toast({"title":"Error fetching event data", "description": eventError.message})
                 return;
             }
 
             if (!eventData) {
                 console.error('Event not found with the provided name, date, or status not Scheduled');
+                toast({"title":"Event not found", "description": "Event not found with the provided name, date, or status not Scheduled"})
                 return;
             }
 
             const eventId = eventData.eventid;
 
-            // Insert reimbursement request data into the database
-            const { error } = await supabase.from('budgetrequests').insert([
-                {
-                    eventid: eventId,
-                    requestedamount: requestedAmount,
-                    reason: reason,
-                },
-            ]);
+            const { data, error } = await supabase
+                .from('budgetrequests')
+                .insert([
+                    {
+                        eventid: eventId,
+                        requestedamount: requestedAmount,
+                        reason: reason,
+                    },
+                ])
+                .select()
+
 
             if (error) {
                 console.error('Error inserting reimbursement request:', error);
+                toast({"title":"Error inserting reimbursement request", "description": error.message})
                 return;
             }
 
             setMessage('Request sent successfully');
+            toast({"title":"Request sent successfully"})
         } catch (error) {
             console.error('Error:', error);
+            toast({"title":"Error"})
         }
     };
+
+    function logout(){
+        window.history.replaceState(null, '', window.location.pathname);
+        router.push("/")
+        return "";
+    }
+
 
     return (
         <main className="flex h-screen w-full flex-col justify-between bg-gray-100">

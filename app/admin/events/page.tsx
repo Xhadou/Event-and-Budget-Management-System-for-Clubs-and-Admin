@@ -2,9 +2,10 @@
 
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import {toast} from "@/components/ui/use-toast";
 
 interface Event {
     eventid: number;
@@ -21,6 +22,8 @@ interface Event {
 export default function Home() {    
     const [events, setEvents] = useState<Event[]>([]);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const email = searchParams.get('email') ?? logout();
     useEffect(() => {
         
         // Function to fetch events
@@ -34,19 +37,29 @@ export default function Home() {
 
             if (error) {
                 console.error('Error fetching events:', error);
+                toast({"title":"Error","description":error.message});
             } 
             if (data) {
                 // Map through the data to include the clubName in the event object
-                const eventsWithClubName = data.map(event => ({
-                    ...event,
-                    clubname: event.clubs?.clubname // Access the ClubName from the joined Clubs table
-                }));
+                const eventsWithClubName = data.map((event: { clubs: { clubname: any; }; }) => {
+                    return ({
+                        ...event,
+                        clubname: event.clubs?.clubname // Access the ClubName from the joined Clubs table
+                    });
+                });
+                // @ts-ignore
                 setEvents(eventsWithClubName);
             }
         };
 
         fetchEvents();
     }, []);
+
+    function logout(){
+        window.history.replaceState(null, '', window.location.pathname);
+        router.push("/")
+        return "";
+    }
 
     return (
         <main className="flex h-screen w-full flex-col justify-between bg-gray-100">
@@ -73,12 +86,12 @@ export default function Home() {
 
                     <div className={"w-2/6 h-full pr-3 pl-8 justify-center flex"}>
                         <div className={"mt-32 w-full"}>
-                            <Button className={"w-full h-fit text-2xl"} onClick={() => {router.push('/admin/pending')}}>Pending Requests</Button>
-                            <Button className={"w-full h-fit text-2xl text-wrap mt-4"} onClick={() => {router.push('/admin/approved')}}>Review Approved Requests</Button>
+                            <Button className={"w-full h-fit text-2xl"} onClick={() => {router.push(`/admin/pending?email=${encodeURIComponent(email)}`)}}>Pending Requests</Button>
+                            <Button className={"w-full h-fit text-2xl text-wrap mt-4"} onClick={() => {router.push(`/admin/approved?email=${encodeURIComponent(email)}`)}}>Review Approved Requests</Button>
                         </div>
                     </div>
                 </div>
-                <Button className={"mt-4"}>Logout</Button>
+                <Button onClick={logout} className={"mt-4"}>Logout</Button>
             </div>
         </main>
     );

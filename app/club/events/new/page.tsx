@@ -1,14 +1,16 @@
 'use client'
 
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {toast} from "@/components/ui/use-toast";
 
 export default function Home() {
+    const router = useRouter();
     const searchParams = useSearchParams();
-    const email = searchParams.get('email');
+    const email = searchParams.get('email') ?? logout();
     const [eventName, setEventName] = useState('');
     const [eventDate, setEventDate] = useState('');
     const [eventVenue, setEventVenue] = useState('');
@@ -28,39 +30,55 @@ export default function Home() {
 
             if (clubError) {
                 console.error('Error fetching club data:', clubError);
+                toast({"title": "Error fetching club data", "description": clubError.message});
                 return;
             }
 
             if (!clubData) {
                 console.error('Club not found for the provided email');
+                toast({"title": "Club not found", "description": "Club not found for the provided email"});
                 return;
             }
 
             const clubId = clubData.clubid;
 
             // Insert event data into the database
-            const { error } = await supabase.from('events').insert([
-                {
-                    eventname: eventName,
-                    date: eventDate,
-                    venue: eventVenue,
-                    requestedbudget: requestedBudget,
-                    clubid: clubId,
-                },
-            ]);
+
+            const { data, error } = await supabase
+                .from('events')
+                .insert([
+                    {
+                        eventname: eventName,
+                        date: eventDate,
+                        venue: eventVenue,
+                        requestedbudget: requestedBudget,
+                        clubid: clubId,
+                    },
+                ])
+                .select()
+
 
             if (error) {
                 console.error('Error inserting event data:', error);
+                toast({"title": "Error inserting event data", "description": error.message});
                 return;
             }
 
-            console.log('Event data inserted successfully');
+            console.log('Event data inserted successfully', data);
+            toast({"title": "Event data inserted successfully", "description": "Event data inserted successfully"})
             // Optionally, you can navigate to a success page or perform other actions
             setMessage('Request submitted successfully');
         } catch (error) {
             console.error('Error:', error);
+            toast({"title": "Error"});
         }
     };
+
+    function logout(){
+        window.history.replaceState(null, '', window.location.pathname);
+        router.push("/")
+        return "";
+    }
 
     return (
         <main className="flex h-screen w-full flex-col justify-between bg-gray-100">

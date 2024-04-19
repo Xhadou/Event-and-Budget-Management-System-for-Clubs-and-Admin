@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {toast} from "@/components/ui/use-toast";
 
 interface Event {
     eventid: number;
@@ -25,8 +26,9 @@ interface BudgetRequest {
 }
 
 export default function Home() {
+    const router = useRouter()
     const searchParams = useSearchParams();
-    const email = searchParams.get('email');
+    const email = searchParams.get('email') ?? logout();
     const [events, setEvents] = useState<Event[]>([]);
     const [budgetRequests, setBudgetRequests] = useState<BudgetRequest[]>([]);
 
@@ -41,6 +43,7 @@ export default function Home() {
 
             if (clubsError) {
                 console.error('Error fetching club ID:', clubsError);
+                toast({"title":"Error fetching club ID", "description": clubsError.message})
                 return;
             }
 
@@ -48,6 +51,7 @@ export default function Home() {
 
             if (!clubID) {
                 console.error('Club ID not found for email:', email);
+                toast({"title":"Club ID not found for email", "description": email})
                 return;
             }
 
@@ -60,6 +64,7 @@ export default function Home() {
 
             if (eventsError) {
                 console.error('Error fetching events:', eventsError);
+                toast({"title":"Error fetching events", "description": eventsError.message})
                 return;
             }
 
@@ -80,6 +85,7 @@ export default function Home() {
 
             if (clubsError) {
                 console.error('Error fetching club ID:', clubsError);
+                toast({"title":"Error fetching club ID", "description": clubsError.message})
                 return;
             }
 
@@ -87,6 +93,7 @@ export default function Home() {
 
             if (!clubID) {
                 console.error('Club ID not found for email:', email);
+                toast({"title":"Club ID not found for email", "description": email})
                 return;
             }
 
@@ -97,36 +104,46 @@ export default function Home() {
 
             if (eventsError) {
                 console.error('Error fetching events:', eventsError);
+                toast({"title":"Error fetching events", "description": eventsError.message})
                 return;
             }
 
-            const eventIDs = eventsData?.map((event) => event.eventid);
+            const eventIDs = eventsData?.map((event: { eventid: any; }) => event.eventid);
 
             if (!eventIDs || eventIDs.length === 0) {
                 console.error('No events found for club ID:', clubID);
+                toast({"title":"No events found for club ID", "description": clubID})
                 return;
             }
 
             const { data: budgetRequestsData, error: budgetRequestsError } = await supabase
                 .from('budgetrequests')
-                .select('requestid, eventid, requestedamount, allocatedamount, adminfeedback')
+                .select('requestid, eventid, requestedamount, allocatedamount, adminfeedback, status')
                 .in('eventid', eventIDs);
 
             if (budgetRequestsError) {
                 console.error('Error fetching budget requests:', budgetRequestsError);
+                toast({"title":"Error fetching budget requests", "description": budgetRequestsError.message})
                 return;
             }
 
-            const requestsWithEventNames = budgetRequestsData?.map((request) => {
+            const requestsWithEventNames = budgetRequestsData?.map((request: { eventid: number; }) => {
                 const relatedEvent = events.find((event) => event.eventid === request.eventid);
-                return { ...request, eventname: relatedEvent?.eventname || 'Unknown', status: relatedEvent?.status || 'Unknown' };
+                return { ...request, eventname: relatedEvent?.eventname || 'Unknown'};
             });
 
+            // @ts-ignore
             setBudgetRequests(requestsWithEventNames || []);
         };
 
         fetchBudgetRequests();
     }, [email, events]);
+
+    function logout(){
+        window.history.replaceState(null, '', window.location.pathname);
+        router.push("/")
+        return "";
+    }
 
     return (
         <main className="flex h-screen w-full flex-col justify-between bg-gray-100 overflow-y-hidden">

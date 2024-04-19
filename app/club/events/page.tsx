@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import {toast} from "@/components/ui/use-toast";
 
 interface Event {
     eventid: number;
@@ -19,11 +20,11 @@ interface Event {
 }
 
 export default function Home() {
+    const router = useRouter();
     const [events, setEvents] = useState<Event[]>([]);
     const [rsvpCounts, setRsvpCounts] = useState<{ [key: number]: number }>({});
     const searchParams = useSearchParams();
-    const email = searchParams.get('email') ?? '';
-    const router = useRouter();
+    const email = searchParams.get('email') ?? logout();
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -36,11 +37,13 @@ export default function Home() {
 
                 if (clubError) {
                     console.error('Error fetching club data:', clubError);
+                    toast({"title": "Error fetching club data", "description": clubError.message})
                     return;
                 }
 
                 if (!clubData) {
                     console.error('Club not found for the provided email');
+                    toast({"title": "Club not found", "description": "Club not found for the provided email"})
                     return;
                 }
 
@@ -56,13 +59,14 @@ export default function Home() {
 
                 if (eventError) {
                     console.error('Error fetching events:', eventError);
+                    toast({"title": "Error fetching events", "description": eventError.message})
                     return;
                 }
 
                 if (eventData) {
                     setEvents(eventData);
 
-                    const eventIds = eventData.map((event) => event.eventid);
+                    const eventIds = eventData.map((event: { eventid: any; }) => event.eventid);
 
                     if (eventIds.length > 0) {
                         const { data: rsvpData, error: rsvpError } = await supabase
@@ -72,12 +76,13 @@ export default function Home() {
 
                         if (rsvpError) {
                             console.error('Error fetching RSVPs:', rsvpError);
+                            toast({"title": "Error fetching RSVPs", "description": rsvpError.message})
                             return;
                         }
 
                         const rsvpCounts: { [key: number]: number } = {};
 
-                        rsvpData.forEach((rsvp) => {
+                        rsvpData.forEach((rsvp: { eventid: any; }) => {
                             const eventId = rsvp.eventid;
                             rsvpCounts[eventId] = rsvpCounts[eventId] ? rsvpCounts[eventId] + 1 : 1;
                         });
@@ -87,6 +92,7 @@ export default function Home() {
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
+                toast({"title": "Error fetching data"})
             }
         };
 
@@ -94,6 +100,12 @@ export default function Home() {
             fetchEvents();
         }
     }, [email]);
+
+    function logout(){
+        window.history.replaceState(null, '', window.location.pathname);
+        router.push("/")
+        return "";
+    }
 
     return (
         <main className="flex h-screen w-full flex-col justify-between bg-gray-100">
@@ -128,7 +140,7 @@ export default function Home() {
                     </div>
                 </div>
 
-                <Button className={"mt-4"}>Logout</Button>
+                <Button className={"mt-4"} onClick={logout}>Logout</Button>
             </div>
         </main>
     )

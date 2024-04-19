@@ -4,7 +4,8 @@ import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
 import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
+import {toast} from "@/components/ui/use-toast";
 
 interface Event {
     eventid: number;
@@ -19,9 +20,11 @@ interface Event {
 }
 
 export default function Home() {
+    const router = useRouter()
     const [events, setEvents] = useState<Event[]>([]);
     const searchParams = useSearchParams();
-    const email = searchParams.get('email');
+    const email = searchParams.get('email') ?? logout();
+
 
     useEffect(() => {
         // Function to fetch events
@@ -30,15 +33,16 @@ export default function Home() {
                 .from('events')
                 .select('*, clubs ( clubname )')
                 .eq('status', 'Scheduled')
-                .gte('date', new Date().toISOString().slice(0, 10)) // Get today's date in YYYY-MM-DD format
+                .gte('date', new Date().toISOString().slice(0, 10))
                 .order('date', { ascending: true });
 
             if (error) {
                 console.error('Error fetching events:', error);
-            } 
+                toast({"title":"Error fetching events","description":error.message})
+            }
             if (data) {
                 // Map through the data to include the clubName in the event object
-                const eventsWithClubName = data.map(event => ({
+                const eventsWithClubName: Event[] = data.map((event: Event & { clubs: { clubname: any; }; }) => ({
                     ...event,
                     clubname: event.clubs?.clubname // Access the ClubName from the joined Clubs table
                 }));
@@ -60,12 +64,14 @@ export default function Home() {
     
             if (existingRSVPsError) {
                 console.error('Error checking existing RSVPs:', existingRSVPsError);
+                toast({"title":"Error checking existing RSVPs","description":existingRSVPsError.message})
                 return;
             }
     
             // If an existing RSVP is found, do not insert
             if (existingRSVPs && existingRSVPs.length > 0) {
                 console.log('RSVP already exists:', existingRSVPs[0]);
+                toast({"title":"RSVP already exists","description":"You have already RSVP'd for this event."})
                 return;
             }
     
@@ -78,14 +84,23 @@ export default function Home() {
     
             if (error) {
                 console.error('Error inserting RSVP:', error);
+                toast({"title":"Error inserting RSVP","description":error.message})
                 return;
             }
     
             console.log('RSVP inserted successfully:', data);
+            toast({"title":"RSVP inserted successfully","description":"You have successfully RSVP'd for this event."})
         } catch (error) {
             console.error('Error inserting RSVP:', error);
+            toast({"title":"Error inserting RSVP"})
         }
     };
+
+    function logout(){
+        window.history.replaceState(null, '', window.location.pathname);
+        router.push("/")
+        return "";
+    }
     
 
     return (
@@ -114,7 +129,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
-                <Button className={"mt-4"}>Logout</Button>
+                <Button onClick={logout} className={"mt-4"}>Logout</Button>
             </div>
         </main>
     );
