@@ -6,6 +6,15 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { supabase } from '@/lib/supabaseClient';
 
+function setlocal(key: string, value: string) {
+  typeof window !== 'undefined' ? window.localStorage.setItem(key, value) : null;
+}
+
+function getlocal(key: string) {
+  const value = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null;
+  return value;
+}
+
 export default function Home() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -25,6 +34,7 @@ export default function Home() {
     }
 
     if (adminData.password === password) {
+      setlocal("email", email)
       router.push(`/admin/events?email=${encodeURIComponent(email)}`);
     } else {
       setLoginError('Incorrect username or password.');

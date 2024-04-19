@@ -6,6 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/lib/supabaseClient'; // Ensure you have initialized Supabase client
 
+function setlocal(key: string, value: string) {
+  typeof window !== 'undefined' ? window.localStorage.setItem(key, value) : null;
+}
+
+function getlocal(key: string) {
+  const value = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null;
+  return value;
+}
+
 export default function Home() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -28,6 +37,7 @@ export default function Home() {
     // Compare the input rollnumber with the one in the database
     if (studentData.rollnumber.toString() === rollnumber) {
       // If match, redirect to the events page
+      setlocal("email", email)
       router.push(`/student/events?email=${encodeURIComponent(email)}`);
     } else {
       setLoginError('Incorrect username or password.');

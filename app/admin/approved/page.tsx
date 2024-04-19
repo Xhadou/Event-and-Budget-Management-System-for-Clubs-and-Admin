@@ -44,17 +44,34 @@ interface BudgetRequest {
 
 
 export default function Home() {
+
+    function setlocal(key: string, value: string) {
+        typeof window !== 'undefined' ? window.localStorage.setItem(key, value) : null;
+    }
+
+    function getlocal(key: string) {
+        const value = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null;
+        return value;
+    }
+
+
     const router = useRouter();
 
     const [alertDialogOpen, setAlertDialogOpen] = useState<boolean>(false);
     const [events, setEvents] = useState<Event[]>([]);
     const [budgetRequests, setBudgetRequests] = useState<BudgetRequest[]>([]);
     const searchParams = useSearchParams();
+
     const email = searchParams.get('email') ?? logout();
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
     const [selectedBudgetRequest, setSelectedBudgetRequest] = useState<BudgetRequest | null>(null);
     const [assignedAmount, setAssignedAmount] = useState<number | null>(null);
     const [remarks, setRemarks] = useState<string | null>(null);
+
+    const logemail = getlocal("email")
+    if(email!==logemail){
+        logout();
+    }
 
     function openAlertDialog() {
         setAlertDialogOpen(true);
@@ -208,6 +225,7 @@ export default function Home() {
     function logout(){
         window.history.replaceState(null, '', window.location.pathname);
         router.push("/")
+        setlocal("email", "");
         return "";
     }
 

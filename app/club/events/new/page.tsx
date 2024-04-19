@@ -7,6 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {toast} from "@/components/ui/use-toast";
 
+function setlocal(key: string, value: string) {
+    typeof window !== 'undefined' ? window.localStorage.setItem(key, value) : null;
+}
+
+function getlocal(key: string) {
+    const value = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null;
+    return value;
+}
+
 export default function Home() {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -15,7 +24,11 @@ export default function Home() {
     const [eventDate, setEventDate] = useState('');
     const [eventVenue, setEventVenue] = useState('');
     const [requestedBudget, setRequestedBudget] = useState('');
-    const [message, setMessage] = useState(''); 
+    const [message, setMessage] = useState('');
+    const logemail = getlocal("email")
+    if(email!==logemail){
+        logout();
+    }
 
     const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -77,6 +90,7 @@ export default function Home() {
     function logout(){
         window.history.replaceState(null, '', window.location.pathname);
         router.push("/")
+        setlocal("email", "");
         return "";
     }
 

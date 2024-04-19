@@ -25,12 +25,25 @@ interface BudgetRequest {
     status: string;
 }
 
+function setlocal(key: string, value: string) {
+    typeof window !== 'undefined' ? window.localStorage.setItem(key, value) : null;
+}
+
+function getlocal(key: string) {
+    const value = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null;
+    return value;
+}
+
 export default function Home() {
     const router = useRouter()
     const searchParams = useSearchParams();
     const email = searchParams.get('email') ?? logout();
     const [events, setEvents] = useState<Event[]>([]);
     const [budgetRequests, setBudgetRequests] = useState<BudgetRequest[]>([]);
+    const logemail = getlocal("email")
+    if(email!==logemail){
+        logout();
+    }
 
     useEffect(() => {
         // Function to fetch events
@@ -142,6 +155,7 @@ export default function Home() {
     function logout(){
         window.history.replaceState(null, '', window.location.pathname);
         router.push("/")
+        setlocal("email", "");
         return "";
     }
 
