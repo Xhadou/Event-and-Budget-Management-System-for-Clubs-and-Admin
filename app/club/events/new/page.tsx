@@ -100,7 +100,7 @@ export default function Home() {
                 <div className="w-full max-w-md px-8 py-6 bg-white rounded-lg shadow-md">
                     <header className="flex justify-between mb-4">
                         <h1 className="text-2xl font-bold text-gray-700">Event Registration</h1>
-                        <p className="text-md text-gray-500 hover:underline">Logout</p>
+                        <p className="text-md text-gray-500 hover:underline" onClick={logout}>Logout</p>
                     </header>
                     <main>
                         <form onSubmit={handleFormSubmit}>

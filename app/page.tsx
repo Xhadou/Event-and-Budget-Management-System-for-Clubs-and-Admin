@@ -18,7 +18,7 @@ export default function Home() {
                         <p>Student</p>
                     </Button>
                     <Button className="drop-shadow-2xl bg-slate-900 text-4xl text-white px-8 py-10 w-48 ml-8 rounded-xl" onClick={()=>router.push("/club/login")}>
-                        <p>Event</p>
+                        <p>Club</p>
                     </Button>
                 </div>
                 <Button className="drop-shadow-2xl bg-slate-900 text-4xl text-white px-8 py-10 w-48 mt-8 rounded-xl" onClick={()=>router.push("/admin/login")}>

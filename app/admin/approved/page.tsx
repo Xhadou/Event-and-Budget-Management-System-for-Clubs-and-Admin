@@ -311,12 +311,12 @@ export default function Home() {
                                                 <div className="mb-4">
                                                     <label htmlFor="event-id"
                                                            className="block text-gray-700 text-sm font-bold mb-2">Allocation:</label>
-                                                    {selectedBudgetRequest?.allocatedamount}
+                                                    {selectedEvent?.allocatedbudget || selectedBudgetRequest?.allocatedamount}
                                                 </div>
                                                 <div className="mb-4">
                                                     <label htmlFor="venue"
                                                            className="block text-gray-700 text-sm font-bold mb-2">Remarks:</label>
-                                                    {selectedBudgetRequest?.adminfeedback}
+                                                    {selectedEvent?.status || selectedBudgetRequest?.adminfeedback}
                                                 </div>
 
                                             </form>
