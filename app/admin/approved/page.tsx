@@ -311,16 +311,12 @@ export default function Home() {
                                                 <div className="mb-4">
                                                     <label htmlFor="event-id"
                                                            className="block text-gray-700 text-sm font-bold mb-2">Allocation:</label>
-                                                    <Input type="number" id="event-id" name="event-id"
-                                                           onChange={(e) => setAssignedAmount(Number(e.target.value))}
-                                                           className="w-full py-2 px-3 text-gray-700"/>
+                                                    {selectedBudgetRequest?.allocatedamount}
                                                 </div>
                                                 <div className="mb-4">
                                                     <label htmlFor="venue"
                                                            className="block text-gray-700 text-sm font-bold mb-2">Remarks:</label>
-                                                    <Textarea onChange={(e) => setRemarks(e.target.value)} id="event-id"
-                                                              name="event-id"
-                                                              className="w-full py-2 px-3 text-gray-700"/>
+                                                    {selectedBudgetRequest?.adminfeedback}
                                                 </div>
 
                                             </form>
@@ -329,15 +325,11 @@ export default function Home() {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <Button onClick={()=>{
-                                        if(selectedEvent){
-                                            updateEvent();
-                                        } else {
-                                            updateBudgetRequest();
-                                        }
+
                                         closeAlertDialog()
                                     }} type="submit"
                                             className="w-full mt-5 font-bold py-2 px-4 rounded-md">
-                                        Update
+                                        Close
                                     </Button>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
