@@ -297,7 +297,7 @@ export default function Home() {
                                                 <div className="mb-4">
                                                     <p className="block text-gray-700 text-sm font-bold mb-2">Club: {selectedEvent?.clubname || selectedBudgetRequest?.clubname}</p>
                                                     <p className="block text-gray-700 text-sm font-bold mb-2">Event
-                                                        ID: {selectedEvent?.eventname || selectedBudgetRequest?.eventName}</p>
+                                                        Name: {selectedEvent?.eventname || selectedBudgetRequest?.eventName}</p>
                                                     {selectedEvent &&
                                                         <p className="block text-gray-700 text-sm font-bold mb-2">Date: {selectedEvent?.date} </p>}
                                                     {selectedEvent &&
